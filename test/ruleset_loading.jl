@@ -22,8 +22,8 @@
         end
 
         @testset "# Make sure nothing happens anymore once we clear the hooks" begin
-            ChainRulesCore.clear_new_rule_hooks!(frule)
-            ChainRulesCore.clear_new_rule_hooks!(rrule)
+            ChainRulesOverloadGeneration.clear_new_rule_hooks!(frule)
+            ChainRulesOverloadGeneration.clear_new_rule_hooks!(rrule)
 
             old_frule_history = copy(frule_history)
             old_rrule_history = copy(rrule_history)
@@ -34,8 +34,8 @@
             @test old_rrule_history == rrule_history
             @test old_frule_history == frule_history
         end
-
     end
+
 
     @testset "_primal_sig" begin
         _primal_sig = ChainRulesOverloadGeneration._primal_sig
@@ -68,5 +68,11 @@
                 Tuple{typeof(*), T, Vector{T}} where T
             )
         end
+    end
+
+    @testset "_is_fallback" begin
+        _is_fallback = ChainRulesOverloadGeneration._is_fallback
+        @test _is_fallback(rrule, only(methods(rrule, (Nothing,))))
+        @test _is_fallback(frule, only(methods(frule, (Nothing,))))
     end
 end

@@ -55,10 +55,10 @@ Returns a list of all the methods of the currently defined rules of the given ki
 Excluding the fallback rule that returns `nothing` for every input.
 """
 function _rule_list end
-# The fallback rules are the only rules defined in ChainRulesCore & that is how we skip them
-# TODO this needs to be changed to work now it is in it's own repo
-_rule_list(rule_kind) = (m for m in methods(rule_kind) if m.module != @__MODULE__)
+_rule_list(rule_kind) = (m for m in methods(rule_kind) if !_is_fallback(rule_kind, m))
 
+"check if this is the fallback-frule/rrule that always returns `nothing`"
+_is_fallback(rule_kind, m::Method) = m.sig === Tuple{typeof(rule_kind), Any, Vararg{Any}}
 
 const LAST_REFRESH_RRULE = Ref(0)
 const LAST_REFRESH_FRULE = Ref(0)
