@@ -10,7 +10,7 @@
             op = sig.parameters[1]
             push!(rrule_history, op)
         end
-        
+
         @testset "new rules hit the hooks" begin
             # Now define some rules
             @scalar_rule x + y (1, 1)
@@ -22,8 +22,8 @@
         end
 
         @testset "# Make sure nothing happens anymore once we clear the hooks" begin
-            ChainRulesCore.clear_new_rule_hooks!(frule)
-            ChainRulesCore.clear_new_rule_hooks!(rrule)
+            ChainRulesOverloadGeneration.clear_new_rule_hooks!(frule)
+            ChainRulesOverloadGeneration.clear_new_rule_hooks!(rrule)
 
             old_frule_history = copy(frule_history)
             old_rrule_history = copy(rrule_history)
@@ -34,11 +34,11 @@
             @test old_rrule_history == rrule_history
             @test old_frule_history == frule_history
         end
-
     end
 
+
     @testset "_primal_sig" begin
-        _primal_sig = ChainRulesCore._primal_sig
+        _primal_sig = ChainRulesOverloadGeneration._primal_sig
         @testset "frule" begin
             @test isequal(  # DataType without shared type but with constraint
                 _primal_sig(frule, Tuple{typeof(frule), Any, typeof(*), Int, Vector{Int}}),
@@ -68,5 +68,11 @@
                 Tuple{typeof(*), T, Vector{T}} where T
             )
         end
+    end
+
+    @testset "_is_fallback" begin
+        _is_fallback = ChainRulesOverloadGeneration._is_fallback
+        @test _is_fallback(rrule, first(methods(rrule, (Nothing,))))
+        @test _is_fallback(frule, first(methods(frule, (Nothing,))))
     end
 end

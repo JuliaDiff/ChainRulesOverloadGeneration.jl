@@ -1,4 +1,8 @@
-# Operator Overloading
+# Operator Overloading AD with ChainRulesOverloadGeneration.jl
+
+The ChainRulesOverloadGeneration package provides a suite of methods for using [ChainRulesCore.jl](https://github.com/JuliaDiff/ChainRulesCore.jl) rules in operator overloaded based AD systems.
+It tracks what rules are defined at any point in time, and lets you trigger functions to which can use `@eval` in order to define the matching operator overloads.
+
 
 The principal interface for using the operator overload generation method is [`on_new_rule`](@ref).
 This function allows one to register a hook to be run every time a new rule is defined.
@@ -14,7 +18,7 @@ or more simply you can just use conditions for this.
 For example if your AD only supports `AbstractMatrix{Float64}` and `Float64` inputs you might write:
 ```julia
 const ACCEPT_TYPE = Union{Float64, AbstractMatrix{Float64}} 
-function define_overload(sig::Type{<:Tuple{F, Vararg{ACCEPT_TYPE}}) where F
+function define_overload(sig::Type{<:Tuple{F, Vararg{ACCEPT_TYPE}}}) where F
     @eval quote
         # ...
     end
@@ -53,28 +57,4 @@ When the rules are refreshed (automatically or manually), the hooks are only tri
 `clear_new_rule_hooks!`(@ref) clears all registered hooks.
 It is useful to undo [`on_new_rule`] hook registration if you are iteratively developing your overload generation function.
 
-## Examples
 
-### ForwardDiffZero
-The overload generation hook in this example is: `define_dual_overload`.
-
-````@eval
-using Markdown
-Markdown.parse("""
-```julia
-$(read(joinpath(@__DIR__,"../../../test/demos/forwarddiffzero.jl"), String))
-```
-""")
-````
-
-### ReverseDiffZero
-The overload generation hook in this example is: `define_tracked_overload`.
-
-````@eval
-using Markdown
-Markdown.parse("""
-```julia
-$(read(joinpath(@__DIR__,"../../../test/demos/reversediffzero.jl"), String))
-```
-""")
-````
