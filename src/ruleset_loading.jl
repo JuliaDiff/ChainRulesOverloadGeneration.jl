@@ -60,6 +60,7 @@ Excluding the fallback rule that returns `nothing` for every input.
 """
 function _rule_list end
 # The fallback rules are the only rules defined in ChainRulesCore & that is how we skip them
+# TODO this needs to be changed to work now it is in it's own repo
 _rule_list(rule_kind) = (m for m in methods(rule_kind) if m.module != @__MODULE__)
 
 

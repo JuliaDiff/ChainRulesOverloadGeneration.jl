@@ -19,10 +19,10 @@ DocMeta.setdocmeta!(
     end
 )
 
-indigo = DocThemeIndigo.install(ChainRulesCore)
+indigo = DocThemeIndigo.install(ChainRulesOverloadGeneration)
 
 makedocs(
-    modules=[ChainRulesCore],
+    modules=[ChainRulesOverloadGeneration],
     format=Documenter.HTML(
         prettyurls=false,
         assets=[indigo],
@@ -67,6 +67,6 @@ makedocs(
 )
 
 deploydocs(
-    repo = "github.com/JuliaDiff/ChainRulesCore.jl.git",
+    repo = "github.com/JuliaDiff/ChainRulesOverloadGeneration.jl.git",
     push_preview=true,
 )

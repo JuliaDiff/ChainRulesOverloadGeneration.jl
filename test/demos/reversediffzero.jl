@@ -1,6 +1,7 @@
 "The simplest viable reverse mode a AD, only supports `Float64`"
 module ReverseDiffZero
 using ChainRulesCore
+using ChainRulesOverloadGeneration
 using Test
 
 #########################################

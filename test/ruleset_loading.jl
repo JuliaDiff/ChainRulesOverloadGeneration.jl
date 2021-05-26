@@ -10,7 +10,7 @@
             op = sig.parameters[1]
             push!(rrule_history, op)
         end
-        
+
         @testset "new rules hit the hooks" begin
             # Now define some rules
             @scalar_rule x + y (1, 1)
@@ -38,7 +38,7 @@
     end
 
     @testset "_primal_sig" begin
-        _primal_sig = ChainRulesCore._primal_sig
+        _primal_sig = ChainRulesOverloadGeneration._primal_sig
         @testset "frule" begin
             @test isequal(  # DataType without shared type but with constraint
                 _primal_sig(frule, Tuple{typeof(frule), Any, typeof(*), Int, Vector{Int}}),

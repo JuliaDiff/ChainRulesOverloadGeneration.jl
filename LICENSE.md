@@ -1,7 +1,7 @@
-The ChainRulesCore.jl package is licensed under the MIT "Expat" License:
+The ChainRulesOverloadGeneration.jl package is licensed under the MIT "Expat" License:
 
 > Copyright (c) 2018-2019: Jarrett Revels, and other JuliaDiff Contributors:
-> https://github.com/JuliaDiff/ChainRulesCore.jl/contributors
+> https://github.com/JuliaDiff/ChainRulesOverloadGeneration.jl/contributors
 >
 > Permission is hereby granted, free of charge, to any person obtaining a copy
 > of this software and associated documentation files (the "Software"), to deal
