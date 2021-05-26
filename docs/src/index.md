@@ -57,29 +57,4 @@ When the rules are refreshed (automatically or manually), the hooks are only tri
 `clear_new_rule_hooks!`(@ref) clears all registered hooks.
 It is useful to undo [`on_new_rule`] hook registration if you are iteratively developing your overload generation function.
 
-## Examples
-Here we define two fairly simplistic operator overloading based AD Systems to demonstrate how this is used.
 
-### ForwardDiffZero
-The overload generation hook in this example is: `define_dual_overload`.
-
-````@eval
-using Markdown
-Markdown.parse("""
-```julia
-$(read(joinpath(@__DIR__,"../../test/demos/forwarddiffzero.jl"), String))
-```
-""")
-````
-
-### ReverseDiffZero
-The overload generation hook in this example is: `define_tracked_overload`.
-
-````@eval
-using Markdown
-Markdown.parse("""
-```julia
-$(read(joinpath(@__DIR__,"../../test/demos/reversediffzero.jl"), String))
-```
-""")
-````

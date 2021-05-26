@@ -16,6 +16,10 @@ makedocs(
     authors="Lyndon White and other contributors",
     pages=[
         "Introduction" => "index.md",
+        "Examples of making AD systems" => [
+            "Forward Mode" => "examples/forward_mode.md",
+            "Reverse Mode" => "examples/reverse_mode.md",
+        ],
         "API" => "api.md",
        ],
     strict=true,

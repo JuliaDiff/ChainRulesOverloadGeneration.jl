@@ -19,7 +19,7 @@ struct Tracked{F} <: Real
     propagate::F
     primal::Float64
     tape::Vector{Tracked}  # a reference to a shared tape
-    partial::Base.RefValue{Float64} # current accumulated sensitivity
+    partial::Base.RefValue{Float64}  # current accumulated sensitivity
 end
 
 "An intermediate value, a Branch in Nabla terms."
@@ -29,14 +29,14 @@ function Tracked(propagate, primal, tape)
     return v
 end
 
-"Marker for inputs (leaves) that don't need to propagate."
-struct NoPropagate end
-
 "An input, a Leaf in Nabla terms. No inputs of its own to propagate to."
 function Tracked(primal, tape)
     # don't actually need to put these on the tape, since they don't need to propagate
     return Tracked(NoPropagate(), primal, tape, Ref(zero(primal)))
 end
+
+"Marker for inputs (leaves) that don't need to propagate."
+struct NoPropagate end
 
 primal(d::Tracked) = d.primal
 primal(d) = d
