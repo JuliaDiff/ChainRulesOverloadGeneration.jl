@@ -12,5 +12,5 @@
 [![](https://img.shields.io/badge/docs-master-blue.svg)](https://juliadiff.org/ChainRulesOverloadGeneration.jl/dev)
 [![](https://img.shields.io/badge/docs-stable-blue.svg)](https://juliadiff.org/ChainRulesOverloadGeneration.jl/stable)
 
-The ChainRulesOverloadGeneration package provides a suite of methods for using [ChainRulesCore.jl](https://github.com/JuliaDiff/ChainRulesCore.jl) rules in operator overloaded based AD systems.
+The ChainRulesOverloadGeneration package provides a suite of methods for using [ChainRulesCore.jl](https://github.com/JuliaDiff/ChainRulesCore.jl) rules in operator overloading AD systems.
 It tracks what rules are defined at any point in time, and lets you trigger functions to which can use `@eval` in order to define the matching operator overloads.
