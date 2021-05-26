@@ -1,9 +1,5 @@
 # Infastructure to support generating overloads from rules.
 _package_hook(::Base.PkgId) = refresh_rules()
-function __init__()
-    # Need to refresh rules when a package is loaded
-    push!(Base.package_callbacks, _package_hook)
-end
 
 # Holds all the hook functions that are invokes when a new rule is defined
 const RRULE_DEFINITION_HOOKS = Function[]

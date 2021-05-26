@@ -4,7 +4,7 @@ using DocThemeIndigo
 using Markdown
 
 DocMeta.setdocmeta!(
-    ChainRulesCore,
+    ChainRulesOverloadGeneration,
     :DocTestSetup,
     quote
         using Random

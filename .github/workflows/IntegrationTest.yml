@@ -15,13 +15,7 @@ jobs:
         julia-version: [1.5]
         os: [ubuntu-latest]
         package:
-          - {user: JuliaDiff, repo: ChainRules.jl}
-          - {user: JuliaMath, repo: SpecialFunctions.jl}
-          - {user: invenia, repo: BlockDiagonals.jl}
-          - {user: invenia, repo: PDMatsExtras.jl}
-          - {user: chrisbrahms, repo: Hankel.jl}
-          - {user: SciML, repo: DiffEqBase.jl}
-          - {user: dfdx, repo: Yota.jl}
+          # - {user: Invenia, repo: Nabla.jl}
 
     steps:
       - uses: actions/checkout@v2
@@ -43,7 +37,7 @@ jobs:
             # force it to use this PR's version of the package
             Pkg.develop(PackageSpec(path="."))  # resolver may fail with main deps
             Pkg.update()
-            Pkg.test()  # resolver may fail with test time deps 
+            Pkg.test()  # resolver may fail with test time deps
           catch err
             err isa Pkg.Resolve.ResolverError || rethrow()
             # If we can't resolve that means this is incompatible by SemVer and this is fine

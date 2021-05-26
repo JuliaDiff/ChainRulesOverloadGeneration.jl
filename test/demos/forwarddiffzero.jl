@@ -1,6 +1,7 @@
 "The simplest viable forward mode a AD, only supports `Float64`"
 module ForwardDiffZero
 using ChainRulesCore
+using ChainRulesOverloadGeneration
 using Test
 
 #########################################

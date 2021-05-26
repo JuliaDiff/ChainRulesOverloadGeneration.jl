@@ -1,0 +1,15 @@
+name = "ChainRulesOverloadGeneration"
+uuid = "f51149dc-2911-5acf-81fc-2076a2a81d4f"
+version = "0.1.0"
+
+[deps]
+ChainRulesCore = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
+
+[compat]
+ChainRulesCore = "0.9"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]

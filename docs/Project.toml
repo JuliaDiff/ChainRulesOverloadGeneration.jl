@@ -1,5 +1,6 @@
 [deps]
 ChainRulesCore = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
+ChainRulesOverloadGeneration = "f51149dc-2911-5acf-81fc-2076a2a81d4f"
 Compat = "34da2185-b29b-5c13-b0c7-acf172513d20"
 DocThemeIndigo = "8bac0ac5-51bf-41f9-885e-2bf1ac2bec5f"
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
