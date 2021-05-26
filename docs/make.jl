@@ -12,7 +12,7 @@ makedocs(
         prettyurls=false,
         assets=[indigo],
     ),
-    sitename="ChainRules",
+    sitename="ChainRules Overload Generation",
     authors="Lyndon White and other contributors",
     pages=[
         "Introduction" => "index.md",
