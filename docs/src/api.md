@@ -2,7 +2,7 @@
 
 ```@autodocs
 Modules = [ChainRulesOverloadGeneration]
-Pages = ["rule_definition_tools.jl"]
+Pages = ["ruleset_loading.jl"]
 Private = false
 ```
 
