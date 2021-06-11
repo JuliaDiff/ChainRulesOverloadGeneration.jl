@@ -52,14 +52,21 @@ clear_new_rule_hooks!(rule_kind) = empty!(_hook_list(rule_kind))
     _rule_list(frule | rrule)
 
 Returns a list of all the methods of the currently defined rules of the given kind.
-Excluding the fallback rule that returns `nothing` for every input.
+Excluding the fallback rule that returns `nothing` for every input;
+and excluding rules that require a particular `RuleConfig`.
 """
-function _rule_list end
-_rule_list(rule_kind) = (m for m in methods(rule_kind) if !_is_fallback(rule_kind, m))
+function _rule_list(rule_kind)
+    return Iterators.filter(methods(rule_kind)) do m
+        !_is_fallback(rule_kind, m) && !_requires_config(m)
+    end
+end
 
 "check if this is the fallback-frule/rrule that always returns `nothing`"
 _is_fallback(::typeof(rrule), m::Method) = m.sig === Tuple{typeof(rrule),Any,Vararg{Any}}
 _is_fallback(::typeof(frule), m::Method) = m.sig === Tuple{typeof(frule),Any,Any,Vararg{Any}}
+
+"check if this rule requires a particular configuation (`RuleConfig`)"
+_requires_config(m::Method) = m.sig.parameters[2] <: RuleConfig
 
 const LAST_REFRESH_RRULE = Ref(0)
 const LAST_REFRESH_FRULE = Ref(0)

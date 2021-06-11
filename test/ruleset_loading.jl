@@ -75,4 +75,29 @@
         @test _is_fallback(rrule, first(methods(rrule, (Nothing,))))
         @test _is_fallback(frule, first(methods(frule, (Tuple{}, Nothing,))))
     end
+
+    @test "_rule_list" begin
+        _rule_list = ChainRulesOverloadGeneration._rule_list
+        @testset "should not have frules that need RuleConfig" begin
+            old_frule_list = collect(_rule_list(frule))
+            function ChainRulesCore.frule(
+                ::RuleConfig{>:Union{HasForwardsMode,HasReverseMode}}, dargs, sum, f, xs
+            )
+                return 1.0, 1.0 # this will not be call so return doesn't matter
+            end
+            # New rule should not have appeared
+            @test collect(_rule_list(frule)) == old_frule_list
+        end
+
+        @testset "should not have rrules that need RuleConfig" begin
+            old_rrule_list = collect(_rule_list(rrule))
+            function ChainRulesCore.rrule(
+                ::RuleConfig{>:Union{HasForwardsMode,HasReverseMode}}, sum, f, xs
+            )
+                return 1.0, x->(x,x,x) # this will not be call so return doesn't matter
+            end
+            # New rule should not have appeared
+            @test collect(_rule_list(rrule)) == old_rrule_list
+        end
+    end
 end
