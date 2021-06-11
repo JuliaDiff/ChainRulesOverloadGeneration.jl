@@ -57,7 +57,7 @@ and excluding rules that require a particular `RuleConfig`.
 """
 function _rule_list(rule_kind)
     return Iterators.filter(methods(rule_kind)) do m
-        !_is_fallback(rule_kind, m) && !_requires_config(m)
+        return !_is_fallback(rule_kind, m) && !_requires_config(m)
     end
 end
 
