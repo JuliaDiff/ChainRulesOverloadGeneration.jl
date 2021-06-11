@@ -58,7 +58,8 @@ function _rule_list end
 _rule_list(rule_kind) = (m for m in methods(rule_kind) if !_is_fallback(rule_kind, m))
 
 "check if this is the fallback-frule/rrule that always returns `nothing`"
-_is_fallback(rule_kind, m::Method) = m.sig === Tuple{typeof(rule_kind), Any, Vararg{Any}}
+_is_fallback(::typeof(rrule), m::Method) = m.sig === Tuple{typeof(rrule),Any,Vararg{Any}}
+_is_fallback(::typeof(frule), m::Method) = m.sig === Tuple{typeof(frule),Any,Any,Vararg{Any}}
 
 const LAST_REFRESH_RRULE = Ref(0)
 const LAST_REFRESH_FRULE = Ref(0)

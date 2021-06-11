@@ -73,6 +73,6 @@
     @testset "_is_fallback" begin
         _is_fallback = ChainRulesOverloadGeneration._is_fallback
         @test _is_fallback(rrule, first(methods(rrule, (Nothing,))))
-        @test _is_fallback(frule, first(methods(frule, (Nothing,))))
+        @test _is_fallback(frule, first(methods(frule, (Tuple{}, Nothing,))))
     end
 end
