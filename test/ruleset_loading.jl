@@ -76,7 +76,7 @@
         @test _is_fallback(frule, first(methods(frule, (Tuple{}, Nothing,))))
     end
 
-    @test "_rule_list" begin
+    @testset "_rule_list" begin
         _rule_list = ChainRulesOverloadGeneration._rule_list
         @testset "should not have frules that need RuleConfig" begin
             old_frule_list = collect(_rule_list(frule))
