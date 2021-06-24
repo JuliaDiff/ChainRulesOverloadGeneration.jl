@@ -90,14 +90,27 @@
         end
 
         @testset "should not have rrules that need RuleConfig" begin
-            old_rrule_list = collect(_rule_list(rrule))
-            function ChainRulesCore.rrule(
-                ::RuleConfig{>:Union{HasForwardsMode,HasReverseMode}}, sum, f, xs
-            )
-                return 1.0, x->(x,x,x) # this will not be call so return doesn't matter
+            @testset "normal type sigs" begin
+                old_rrule_list = collect(_rule_list(rrule))
+                function ChainRulesCore.rrule(
+                    ::RuleConfig{>:Union{HasForwardsMode,HasReverseMode}}, sum, f, xs
+                )
+                    return 1.0, x->(x,x,x) # this will not be call so return doesn't matter
+                end
+                # New rule should not have appeared
+                @test collect(_rule_list(rrule)) == old_rrule_list
             end
-            # New rule should not have appeared
-            @test collect(_rule_list(rrule)) == old_rrule_list
+            @testset "UnionAll type sigs" begin
+                old_rrule_list = collect(_rule_list(rrule))
+                function ChainRulesCore.rrule(
+                    ::RuleConfig{>:Union{HasForwardsMode,HasReverseMode}}, sum, f::F, xs
+                ) where F <: Function
+                    return 1.0, x->(x,x,x) # this will not be call so return doesn't matter
+                end
+                # New rule should not have appeared
+                @test collect(_rule_list(rrule)) == old_rrule_list
+                # Above would error if we were not handling UnionAll's right
+            end
         end
     end
 end
