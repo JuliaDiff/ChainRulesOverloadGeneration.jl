@@ -66,7 +66,8 @@ _is_fallback(::typeof(rrule), m::Method) = m.sig === Tuple{typeof(rrule),Any,Var
 _is_fallback(::typeof(frule), m::Method) = m.sig === Tuple{typeof(frule),Any,Any,Vararg{Any}}
 
 "check if this rule requires a particular configuation (`RuleConfig`)"
-_requires_config(m::Method) = m.sig.parameters[2] <: RuleConfig
+_requires_config(m::Method) = m.sig <: Tuple{Any, RuleConfig, Vararg}
+
 
 const LAST_REFRESH_RRULE = Ref(0)
 const LAST_REFRESH_FRULE = Ref(0)
