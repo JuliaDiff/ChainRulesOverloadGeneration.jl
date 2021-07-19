@@ -70,12 +70,6 @@
         end
     end
 
-    @testset "_is_fallback" begin
-        _is_fallback = ChainRulesOverloadGeneration._is_fallback
-        @test _is_fallback(rrule, first(methods(rrule, (Nothing,))))
-        @test _is_fallback(frule, first(methods(frule, (Tuple{}, Nothing,))))
-    end
-
     @testset "_rule_list" begin
         _rule_list = ChainRulesOverloadGeneration._rule_list
         @testset "should not have frules that need RuleConfig" begin
@@ -111,6 +105,33 @@
                 @test collect(_rule_list(rrule)) == old_rrule_list
                 # Above would error if we were not handling UnionAll's right
             end
+        end
+
+
+        @testset "opting out" begin
+            oa_id(x, y) = x
+            @scalar_rule(oa_id(x::Number), 1)
+            @opt_out ChainRulesCore.rrule(::typeof(oa_id), x::Float32)
+            @opt_out ChainRulesCore.frule(::Any, ::typeof(oa_id), x::Float32)
+
+            # In theses tests we `@assert` the behavour that `methods` has
+            # and then `@test` that `_rule_list` differs from that, in the way we want
+            
+            @test !isempty([m for m in _rule_list(rrule) if m.sig <: Tuple{Any,typeof(oa_id),Number}])
+            # Opted out
+            @assert !isempty([m for m in methods(rrule) if m.sig <: Tuple{Any,typeof(oa_id),Float32}])
+            @test isempty([m for m in _rule_list(rrule) if m.sig <: Tuple{Any,typeof(oa_id),Float32}])
+            # fallback
+            @test !isempty([m for m in methods(rrule) if m.sig == Tuple{typeof(rrule),Any,Vararg{Any}}])
+            @test isempty([m for m in _rule_list(rrule) if m.sig == Tuple{typeof(rrule),Any,Vararg{Any}}])
+
+            @test !isempty([m for m in _rule_list(frule) if m.sig <: Tuple{Any,Any,typeof(oa_id),Number}])
+            # Opted out
+            @assert !isempty([m for m in methods(frule) if m.sig <: Tuple{Any,Any,typeof(oa_id),Float32}])
+            @test isempty([m for m in _rule_list(frule) if m.sig <: Tuple{Any,Any,typeof(oa_id),Float32}])
+            # fallback
+            @assert !isempty([m for m in methods(frule) if m.sig == Tuple{typeof(frule),Any,Any,Vararg{Any}}])
+            @test isempty([m for m in _rule_list(frule) if m.sig == Tuple{typeof(frule),Any,Any,Vararg{Any}}])
         end
     end
 end
