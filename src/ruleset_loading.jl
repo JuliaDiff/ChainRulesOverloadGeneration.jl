@@ -48,26 +48,37 @@ If you previously wrong an incorrect hook, you can use this to get rid of the ol
 """
 clear_new_rule_hooks!(rule_kind) = empty!(_hook_list(rule_kind))
 
+###########################################################################################
+
 """
     _rule_list(frule | rrule)
 
 Returns a list of all the methods of the currently defined rules of the given kind.
-Excluding the fallback rule that returns `nothing` for every input;
-and excluding rules that require a particular `RuleConfig`.
+Excluding the fallback rule (that return `nothing` for every input) and `@opt_out` opted out
+rules, and excluding rules that require a particular `RuleConfig`.
 """
-function _rule_list(rule_kind)
+function _rule_list(rule_kind::Union{typeof(frule), typeof(rrule)})
+    opted_out = Set(arg_type_tuple(m.sig) for m in _no_rule_list(rule_kind))
     return Iterators.filter(methods(rule_kind)) do m
-        return !_is_fallback(rule_kind, m) && !_requires_config(m)
+        return !_requires_config(m) && arg_type_tuple(m.sig) ∉ opted_out
     end
 end
-
-"check if this is the fallback-frule/rrule that always returns `nothing`"
-_is_fallback(::typeof(rrule), m::Method) = m.sig === Tuple{typeof(rrule),Any,Vararg{Any}}
-_is_fallback(::typeof(frule), m::Method) = m.sig === Tuple{typeof(frule),Any,Any,Vararg{Any}}
 
 "check if this rule requires a particular configuation (`RuleConfig`)"
 _requires_config(m::Method) = m.sig <: Tuple{Any, RuleConfig, Vararg}
 
+
+_no_rule_list(::typeof(rrule)) = methods(ChainRulesCore.no_rrule)
+_no_rule_list(::typeof(frule)) = methods(ChainRulesCore.no_frule)
+
+arg_type_tuple(d::DataType) = Tuple{d.parameters[2:end]...}
+function arg_type_tuple(d::UnionAll)
+    body = Base.unwrap_unionall(d)
+    body_tt = arg_type_tuple(body)
+    return Base.rewrap_unionall(body_tt, d)
+end
+
+######################################################################
 
 const LAST_REFRESH_RRULE = Ref(0)
 const LAST_REFRESH_FRULE = Ref(0)
