@@ -29,4 +29,5 @@ makedocs(
 deploydocs(
     repo = "github.com/JuliaDiff/ChainRulesOverloadGeneration.jl.git",
     push_preview=true,
+    devbranch="main",
 )
