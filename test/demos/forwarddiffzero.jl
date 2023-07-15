@@ -56,6 +56,11 @@ end
 # !Important!: Attach the define function to the `on_new_rule` hook
 on_new_rule(define_dual_overload, frule)
 
+# get around ambiguities in Base
+Base.:(+)(x::Float64, y::Float64) = Base.add_float(x, y)
+Base.:(-)(x::Float64, y::Float64) = Base.sub_float(x, y)
+Base.:(*)(x::Float64, y::Float64) = Base.mul_float(x, y)
+
 "Do a calculus. `f` should have a single input."
 function derv(f, arg)
     duals = Dual(arg, one(arg))
