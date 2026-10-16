@@ -69,22 +69,30 @@ function define_tracked_overload(sig)
     all(argT isa Type && Float64 <: argT for argT in argTs) || return # only handling purely Float64 ops.
 
     N = length(sig.parameters) - 1  # skip the op
-    fdef = quote
-        # we use the function call overloading form as it lets us avoid namespacing issues
-        # as we can directly interpolate the function type into to the AST.
-        function (op::$opT)(tracked_args::Vararg{Union{Tracked, Float64}, $N}; kwargs...)
-            args = (op, primal.(tracked_args)...)
-            y, y_pullback = rrule(args...; kwargs...)
-            the_tape = get_tape(tracked_args)
-            y_tracked = Tracked(y, the_tape) do ȳ
-                # pull this partial back and propagate it to the input's partial store
-                _, ārgs = Iterators.peel(y_pullback(ȳ))
-                accum!.(tracked_args, ārgs)
+    names = [Symbol(:x, j) for j in 1:N]
+    # Define one method per position of the first `Tracked` argument, so that every method
+    # requires at least one `Tracked` and we never overload `op` for purely `Float64` arguments
+    # (which would be type piracy). In particular, nothing is defined if `op` takes no arguments.
+    for i in 1:N
+        Ts = [fill(Float64, i - 1); Tracked; fill(Union{Tracked, Float64}, N - i)]
+        fdef = quote
+            # we use the function call overloading form as it lets us avoid namespacing issues
+            # as we can directly interpolate the function type into the AST.
+            function (op::$opT)($(map((x, T) -> :($x::$T), names, Ts)...); kwargs...)
+                tracked_args = ($(names...),)
+                args = (op, primal.(tracked_args)...)
+                y, y_pullback = rrule(args...; kwargs...)
+                the_tape = get_tape(tracked_args)
+                y_tracked = Tracked(y, the_tape) do ȳ
+                    # pull this partial back and propagate it to the input's partial store
+                    _, ārgs = Iterators.peel(y_pullback(ȳ))
+                    accum!.(tracked_args, ārgs)
+                end
+                return y_tracked
             end
-            return y_tracked
         end
+        eval(fdef)
     end
-    eval(fdef)
 end
 
 # !Important!: Attach the define function to the `on_new_rule` hook
