@@ -40,17 +40,25 @@ function define_dual_overload(sig)
     all(argT isa Type && Float64 <: argT for argT in argTs) || return  # only handling purely Float64 ops.
 
     N = length(sig.parameters) - 1  # skip the op
-    fdef = quote
-        # we use the function call overloading form as it lets us avoid namespacing issues
-        # as we can directly interpolate the function type into to the AST.
-        function (op::$opT)(dual_args::Vararg{Union{Dual, Float64}, $N}; kwargs...)
-            ȧrgs = (NoTangent(),  partial.(dual_args)...)
-            args = (op, primal.(dual_args)...)
-            y, ẏ = frule(ȧrgs, args...; kwargs...)
-            return Dual(y, ẏ)  # if y, ẏ are not `Float64` this will error.
+    names = [Symbol(:x, j) for j in 1:N]
+    # Define one method per position of the first `Dual` argument, so that every method
+    # requires at least one `Dual` and we never overload `op` for purely `Float64` arguments
+    # (which would be type piracy). In particular, nothing is defined if `op` takes no arguments.
+    for i in 1:N
+        Ts = [fill(Float64, i - 1); Dual; fill(Union{Dual, Float64}, N - i)]
+        fdef = quote
+            # we use the function call overloading form as it lets us avoid namespacing issues
+            # as we can directly interpolate the function type into the AST.
+            function (op::$opT)($(map((x, T) -> :($x::$T), names, Ts)...); kwargs...)
+                dual_args = ($(names...),)
+                ȧrgs = (NoTangent(),  partial.(dual_args)...)
+                args = (op, primal.(dual_args)...)
+                y, ẏ = frule(ȧrgs, args...; kwargs...)
+                return Dual(y, ẏ)  # if y, ẏ are not `Float64` this will error.
+            end
         end
+        eval(fdef)
     end
-    eval(fdef)
 end
 
 # !Important!: Attach the define function to the `on_new_rule` hook
