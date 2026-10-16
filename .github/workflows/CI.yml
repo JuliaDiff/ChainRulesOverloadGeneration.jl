@@ -28,13 +28,16 @@ jobs:
             arch: x86
           - os: windows-latest
             arch: x86
-          # No native Apple Silicon binaries for Julia 1.0
+          # No native Apple Silicon binaries for Julia 1.0, test it on an Intel runner instead
           - os: macOS-latest
             version: "1.0"
         include:
           # Add a 1.5 job because that's what Invenia actually uses
           - os: ubuntu-latest
             version: "1.5"
+            arch: default
+          - os: macos-15-intel
+            version: "1.0"
             arch: default
     steps:
       - uses: actions/checkout@v7
