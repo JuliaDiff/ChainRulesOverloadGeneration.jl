@@ -48,6 +48,12 @@ Packages like [ExprTools.jl](https://github.com/invenia/ExprTools.jl) can be hel
 Its generally fairly simple, though can become complex if you need to handle complicated type-constraints.
 Examples are shown below.
 
+Make sure every generated overload requires at least one argument of your AD's type.
+An overload such as `(op::typeof(+))(::Vararg{Union{Dual,Float64},2})` also matches
+`+(::Float64, ::Float64)`, which is type piracy and is ambiguous with Base's methods.
+One way to avoid this is to define one method per position of the first argument of your
+AD's type, as the examples do.
+
 The hook is automatically triggered whenever a package is loaded.
 It can also be triggers manually using `refresh_rules`(@ref).
 This is useful for example if new rules are define in the REPL, or if a package defining rules is modified.
